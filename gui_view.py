@@ -14,7 +14,7 @@ class GameViewGUI:
         self.board_container = Box(self.window, layout="grid")
 
         self.widget = Waffle(self.board_container, height=3, width=3, pad=0, dim=100, grid=[0, 0], command=controller_callback)
-        self.message_text = Text(self.window, text="", size=16, color=FONT_COLOR, grid=[0,1])
+        self.message_text = Text(self.window, text="", size=16, color=FONT_COLOR)
 
     def update_view(self, model):
         self.message_text.value = model.message
