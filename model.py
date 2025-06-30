@@ -1,4 +1,4 @@
-from gamestates import GameState, PlayersTurn, TurnChange
+from gamestates import GameState, PlayersTurn
 import random
 
 PLAYER_SYMBOL_X = 'X'
@@ -19,6 +19,7 @@ class TicTacToe:
             ['_', '_', '_']
         ]
         self.winner = None
+        self.draw = None
         self.message = ''
         self.debug = ''
         self.board_state = 'empty'
@@ -34,20 +35,23 @@ class TicTacToe:
     def transition_to(self, new_state: GameState):
         self.state = new_state
         self.debug = f"GAME CONTEXT: Transitioned to '{self.state.__class__.__name__}'"
-        print(f"GAME CONTEXT: Transitioned to '{self.state.__class__.__name__}'")
+        print(self.debug)
 
     def start_new_game(self):
         self.decide_first_to_start()
-        self.message = f"Starting the game..."
-        self.message = f"{self.current_player} goes first."
+        self.message = f"Game Start"
+        print(self.message)
+        self.message = f"Its {self.current_player}'s turn."
+        print(self.message)
+
         self.transition_to(PlayersTurn(self))
 
     def advance_state(self):
-        self.state.handle_action()
+            self.state.handle_action()
 
-    def make_move(self, row, col):
-        if self.gameboard[row][col] == '_':
-            self.gameboard[row][col] = self.current_player
+    def make_move(self, x, y):
+        if self.gameboard[x][y] == '_':
+            self.gameboard[x][y] = self.current_player
             return True
         else:
             print('Slot taken. Choose another.')
@@ -58,22 +62,22 @@ class TicTacToe:
             print("GAME CONTEXT: Checking for winner...")
             for row in range(3):
                 if self.gameboard[row][0] == self.gameboard[row][1] == self.gameboard[row][2] and self.gameboard[row][0] != '_':
-                    print(f"Winner: Player {self.current_player}")
+                    print(f"Winner: Player {self.gameboard[row][0]}")
                     return self.gameboard[row][0]
 
             # Vertical wins
             for col in range(3):
                 if self.gameboard[0][col] == self.gameboard[1][col] == self.gameboard[2][col] and self.gameboard[0][col] != '_':
-                    print(f"Winner: Player {self.current_player}")
+                    print(f"Winner: Player {self.gameboard[0][col]}")
                     return self.gameboard[0][col]
 
             #Diagonal wins
             if self.gameboard[0][0] == self.gameboard[1][1] == self.gameboard[2][2] and self.gameboard[0][0] != '_':
-                print(f"Winner: Player {self.current_player}")
+                print(f"Winner: Player {self.gameboard[0][0]}")
                 return self.gameboard[0][0]
 
             if self.gameboard[0][2] == self.gameboard[1][1] == self.gameboard[2][0] and self.gameboard[0][2] != '_':
-                print(f"Winner: Player {self.current_player}")
+                print(f"Winner: Player {self.gameboard[0][2]}")
                 return self.gameboard[0][2]
 
             print("No winner... Continue.")
