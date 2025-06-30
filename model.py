@@ -20,6 +20,7 @@ class TicTacToe:
         ]
         self.winner = None
         self.message = ''
+        self.debug = ''
         self.board_state = 'empty'
 
         self.state: GameState = None
@@ -32,11 +33,13 @@ class TicTacToe:
 
     def transition_to(self, new_state: GameState):
         self.state = new_state
+        self.debug = f"GAME CONTEXT: Transitioned to '{self.state.__class__.__name__}'"
         print(f"GAME CONTEXT: Transitioned to '{self.state.__class__.__name__}'")
 
     def start_new_game(self):
         self.decide_first_to_start()
-        self.message = f"Starting the game...\n{self.current_player} goes first."
+        self.message = f"Starting the game..."
+        self.message = f"{self.current_player} goes first."
         self.transition_to(PlayersTurn(self))
 
     def advance_state(self):

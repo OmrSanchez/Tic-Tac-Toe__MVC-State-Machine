@@ -1,5 +1,10 @@
-# position = None
-# player_select = None
-#
-# if position == (0,0):
-#     player_select = 'A'
+import guizero
+
+class GameController:
+    def __init__(self, model):
+        self.model = model
+
+    def handle_input(self, widget):
+        widget.when_mouse_enters
+
+        self.model.advance_state()

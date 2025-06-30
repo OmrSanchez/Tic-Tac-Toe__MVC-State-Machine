@@ -17,7 +17,7 @@ class PlayersTurn(GameState):
     def handle_action(self):
         print("STATE ACTION: Playing a round...")
         print(f"Its {self.game.current_player}'s turn.")
-
+        self.game.message = f"Its {self.game.current_player}'s turn."
         row = int(input('Select row: '))
         col = int(input('Select col: '))
 
