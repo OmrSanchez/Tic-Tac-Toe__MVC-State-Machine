@@ -3,26 +3,16 @@ class GameController:
         self.model = model
         self.view = None
 
-    def on_waffle_clicked(self, x, y):
-        if not self.model.winner:
-            # self.controller_debug_message.value = f"Player {self.model.current_player} selected ({x},{y})"
-            self.model.make_move(y, x)
-            for row in range(3):
-                print(self.model.gameboard[row])
-
-            if self.model.current_player == self.model.player1:
-                self.model.current_player = self.model.player2
-            else:
-                self.model.current_player = self.model.player1
+    def on_start_clicked(self):
+        self.model.start_new_game()
+        self.model.message = f"Its {self.model.current_player}'s turn."
         self.model.advance_state()
+        self.view.draw_board(self.model)
 
-
-
-
-
-
-
-
-
-
-
+    def on_waffle_clicked(self, x, y):
+        if not self.model.winner and not self.model.board_space == 'full':
+            self.model.make_move(y, x)
+            self.view.update_view(self.model)
+            self.model.turn_change()
+            self.model.advance_state()
+            self.view.update_view(self.model)

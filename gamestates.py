@@ -17,25 +17,15 @@ class PlayersTurn(GameState):
     def handle_action(self):
         winner = self.game.check_winner()
         if winner:
+            self.game.context = "GAME CONTEXT: Winner decided."
             self.game.winner = winner
-            print(f"STATE ACTION: Transitioning to GameOver")
+            self.game.message = f"Winner: Player {winner}"
+            self.game.debug = f"STATE ACTION: Winner decided. Transitioning to GameOver"
             self.game.transition_to(GameOver(self.game))
         elif not winner:
+            self.game.debug = "STATE ACTION: Checking Draw..."
             self.game.check_draw()
-            if self.game.board_state == 'full':
-                print(f"No winner. This is a DRAW")
-                self.game.transition_to(GameOver(self.game))
 
 class GameOver(GameState):
     def handle_action(self):
-        if self.game.winner == 'winner':
-            self.game.message = "Thank you for playing my game."
-        # if again == 'yes':
-        #     print('STATE ACTION: Resetting game..')
-        #     self.game.reset()
-        # else:
-        #     print('STATE ACTION: Ending Game..')
-        #     self.game.run = False
-
-
-
+        self.game.context = 'Tic-Tac-Toe...Game Over'

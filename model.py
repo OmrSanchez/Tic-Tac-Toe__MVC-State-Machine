@@ -1,4 +1,4 @@
-from gamestates import GameState, PlayersTurn
+from gamestates import GameState, PlayersTurn, GameOver
 import random
 
 PLAYER_SYMBOL_X = 'X'
@@ -18,14 +18,18 @@ class TicTacToe:
            #(2,0)(2,1)(2,2)
             ['_', '_', '_']
         ]
+        self.spaces = 9
         self.winner = None
         self.draw = None
+
         self.message = ''
         self.debug = ''
-        self.board_state = 'empty'
+        self.context = ''
+        self.space_message = ''
+
+        self.board_space = 'empty'
 
         self.state: GameState = None
-        self.start_new_game()
 
     def decide_first_to_start(self):
         players = [self.player1, self.player2]
@@ -34,16 +38,11 @@ class TicTacToe:
 
     def transition_to(self, new_state: GameState):
         self.state = new_state
-        self.debug = f"GAME CONTEXT: Transitioned to '{self.state.__class__.__name__}'"
-        print(self.debug)
+        self.debug = f"DEBUG: Transitioned to '{self.state.__class__.__name__}'"
 
     def start_new_game(self):
         self.decide_first_to_start()
-        self.message = f"Game Start"
-        print(self.message)
-        self.message = f"Its {self.current_player}'s turn."
-        print(self.message)
-
+        self.context = "GAME CONTEXT: Game Start"
         self.transition_to(PlayersTurn(self))
 
     def advance_state(self):
@@ -52,52 +51,48 @@ class TicTacToe:
     def make_move(self, x, y):
         if self.gameboard[x][y] == '_':
             self.gameboard[x][y] = self.current_player
+            self.spaces -= 1
+            self.space_message = f"{self.spaces} spaces available."
             return True
         else:
-            print('Slot taken. Choose another.')
+            self.context = 'GAME CONTEXT: Slot taken. Choose another.'
             return False
 
+    def turn_change(self):
+        # self.message = f"Its {self.current_player}'s turn."
+        if self.current_player == self.player1:
+            self.current_player = self.player2
+        else:
+            self.current_player = self.player1
+        self.message = f"Its {self.current_player}'s turn."
+
     def check_winner(self):
-             # Horizontal wins
-            print("GAME CONTEXT: Checking for winner...")
-            for row in range(3):
-                if self.gameboard[row][0] == self.gameboard[row][1] == self.gameboard[row][2] and self.gameboard[row][0] != '_':
-                    print(f"Winner: Player {self.gameboard[row][0]}")
-                    return self.gameboard[row][0]
+         # Horizontal wins
+        self.context = 'GAME CONTEXT: Checking for winner...'
+        for row in range(3):
+            if self.gameboard[row][0] == self.gameboard[row][1] == self.gameboard[row][2] and self.gameboard[row][0] != '_':
+                return self.gameboard[row][0]
+        # Vertical wins
+        for col in range(3):
+            if self.gameboard[0][col] == self.gameboard[1][col] == self.gameboard[2][col] and self.gameboard[0][col] != '_':
+                return self.gameboard[0][col]
 
-            # Vertical wins
-            for col in range(3):
-                if self.gameboard[0][col] == self.gameboard[1][col] == self.gameboard[2][col] and self.gameboard[0][col] != '_':
-                    print(f"Winner: Player {self.gameboard[0][col]}")
-                    return self.gameboard[0][col]
+        #Diagonal wins
+        if self.gameboard[0][0] == self.gameboard[1][1] == self.gameboard[2][2] and self.gameboard[0][0] != '_':
+            return self.gameboard[0][0]
 
-            #Diagonal wins
-            if self.gameboard[0][0] == self.gameboard[1][1] == self.gameboard[2][2] and self.gameboard[0][0] != '_':
-                print(f"Winner: Player {self.gameboard[0][0]}")
-                return self.gameboard[0][0]
-
-            if self.gameboard[0][2] == self.gameboard[1][1] == self.gameboard[2][0] and self.gameboard[0][2] != '_':
-                print(f"Winner: Player {self.gameboard[0][2]}")
-                return self.gameboard[0][2]
-
-            print("No winner... Continue.")
-            return None
+        if self.gameboard[0][2] == self.gameboard[1][1] == self.gameboard[2][0] and self.gameboard[0][2] != '_':
+            return self.gameboard[0][2]
+        return None
 
     def check_draw(self):
-        full = 0
-        count = 9
-        for item in self.gameboard:
-            for key in item:
-                if key != '_':
-                    count -= 1
-
-        print(f"Available Tiles: {count}")
-        if count == full:
-            print('GAME CONTEXT: Board is full...')
-            self.board_state = 'full'
-            return self.board_state
-        else:
-            return None
+        self.context = "GAME CONTEXT: Checking for draw"
+        if self.spaces == 0:
+            self.context = "GAME CONTEXT: Board is full..."
+            self.board_space = 'full'
+        if self.winner is None and self.board_space == 'full':
+            self.message = "DRAW..."
+            self.transition_to(GameOver(self))
 
     def reset(self):
         self.run = True
@@ -114,24 +109,7 @@ class TicTacToe:
         ]
         self.winner = None
         self.message = ''
-        self.board_state = 'empty'
+        self.board_space = 'empty'
         self.state: GameState = None
-        print('Game is now reset. Have Fun!')
+
         self.start_new_game()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
